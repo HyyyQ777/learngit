@@ -1,0 +1,41 @@
+CREATE TABLE IF NOT EXISTS users (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    phone VARCHAR(20) NOT NULL UNIQUE,
+    name VARCHAR(50) DEFAULT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role VARCHAR(20) NOT NULL DEFAULT 'expert',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS applications (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    application_no VARCHAR(50) UNIQUE,
+    basic_info JSON,
+    detailed_info JSON,
+    competition_experiences JSON,
+    honors JSON,
+    signature_url VARCHAR(500) DEFAULT NULL,
+    seal_url VARCHAR(500) DEFAULT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'draft',
+    submitted_at DATETIME DEFAULT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS audit_records (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    application_id BIGINT NOT NULL,
+    auditor_name VARCHAR(50) NOT NULL,
+    auditor_role VARCHAR(30) NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    comment TEXT DEFAULT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (application_id) REFERENCES applications(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT IGNORE INTO users (phone, name, password_hash, role) VALUES
+('13800138999', '管理员', 'sms_login', 'admin'),
+('13800138001', '张教练', 'sms_login', 'coach');
